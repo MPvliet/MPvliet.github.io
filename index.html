@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EO4GEO Knowledge Graph and Applications</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  </head>
+
+  <body>
+    <header>
+      <div class="logo-container">
+        <img
+          src="http://www.eo4geo.eu/wp-content/uploads/2020/10/BoKVisulization-inline-800x124.png"
+          id="logo"
+        />
+      </div>
+      <div class="menu-bar" id="menuBar">
+        <a href="#" class="menu-item active">Knowledge Footprints</a>
+        <a href="#" class="menu-item">Footprint Matching</a>
+        <a href="#" class="menu-item">Knowledge Graph</a>
+        <a href="#" class="menu-item">Ontology</a>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="left-side">
+        <form class="user-input-form">
+          <label for="typeOfFootprintDropDown"
+            >Type of Knowledge Footprint</label
+          >
+          <select id="typeOfFootprintDropDown" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+            <option value="Individual">Individual</option>
+            <option value="Organisational">Organisational</option>
+          </select>
+          <label for="typeOfVisualisationDropDown">Type of Visualisation</label>
+          <select id="typeOfVisualisationDropDown" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+            <option value="Radial-Cluster-Tree">Radial Cluster Tree</option>
+            <option value="Radial-Tidy-Tree">Radial Tidy Tree</option>
+          </select>
+          <label for="dropdownFootprintEntity">Footprint of whom?</label>
+          <select id="dropdownFootprintEntity" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <input id="submitButton" type="submit" value="Generate Footprint" />
+        </form>
+        <div id="detailsSection" class="left-side">
+          <!-- Details will be displayed here -->
+        </div>
+      </div>
+      <div id="right-side" class="right-side">
+        <!-- locatie voor sparql output en D3 visualisaties. -->
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById('menuBar')
+        .addEventListener('click', function (event) {
+          if (event.target.classList.contains('menu-item')) {
+            let items = document.querySelectorAll('.menu-item');
+            items.forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+          }
+        });
+    </script>
+    <script type="module" src="src/js/main.js"></script>
+  </body>
+</html>

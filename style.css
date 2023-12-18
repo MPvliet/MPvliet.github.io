@@ -1,0 +1,130 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #333; /* setting a default text color */
+}
+
+header {
+  background-color: #0c1a1a; /* Light gray background for the header */
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+}
+
+.logo-container {
+  width: 20%; /* Taking up 30% of the header width */
+  display: flex;
+  align-items: center; /* This will vertically center the logo in the header */
+  margin-left: 10px;
+}
+
+#logo {
+  width: 100%;
+  height: auto;
+}
+
+.menu-bar {
+  width: 80%;
+  height: 100px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  background-color: #0c1a1a; /* Light gray background for contrast */
+  padding: 0px;
+}
+
+.menu-item {
+  margin-right: 20px;
+  margin-left: 20px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff; /* text colour */
+  padding: 16px 20px;
+  border-radius: 5px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.menu-item:hover,
+.menu-item.active {
+  background-color: #f0cd02; /* Specified color for hover and active states */
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100vh;
+}
+
+.left-side {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  background-color: #0c1a1a;
+  color: #fff; /* setting the text color to white for better readability on dark background */
+}
+
+.right-side {
+  width: 80%;
+
+  background-color: #0c1a1a; /* #ffffff; /* Light gray background for visualization area */
+}
+
+.user-input-form {
+  display: flex;
+  padding-left: 15px;
+  padding-right: 2px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#detailsSection {
+  margin-top: 0px;
+  font-size: 14px;
+  padding-left: 15px;
+  padding-right: 2px;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-top: 10px;
+  color: #ddd; /* Lighter gray for better visibility on dark background */
+}
+
+.dropdown-menu {
+  width: 100%;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #ffffff; /* Lighter gray for dropdown on dark background */
+  color: #0e1d1f; /* Text color set to white for dropdown */
+}
+
+input[type='text'] {
+  padding: 50px 0px;
+  width: 100% - 2px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  color: #0e1d1f; /* Text color set to white for input */
+}
+
+input[type='submit'] {
+  padding: 8px 12px;
+  background-color: #005ca2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+input[type='submit']:hover {
+  background-color: #0056b3;
+}
