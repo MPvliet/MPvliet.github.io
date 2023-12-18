@@ -1,4 +1,4 @@
-import { genericSPARQLQuery } from '/Footprint-Website/src/js/sparql/genericSPARQLQuery.js';
+import { genericSPARQLQuery } from '/src/js/sparql/genericSPARQLQuery.js';
 
 function createRadialClusterTreeChart(data) {
   const width = 1780;
