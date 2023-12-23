@@ -1,11 +1,17 @@
-import { genericSPARQLQuery } from '../../../src/js/sparql/genericSPARQLQuery.js';
+// Copied and adjusted from https://observablehq.com/@d3/radial-cluster/2?intent=fork
+
+import {
+  showDetails,
+  showLabel,
+  hideLabel,
+} from './interactiveD3Functionalities.js';
 
 function createRadialClusterTreeChart(data) {
-  const width = 1780;
-  const height = width;
+  const height = 930; //screen.availHeight - 280;
+  const width = 1590; //screen.availWidth * 0.8;
   const cx = width * 0.5;
   const cy = height * 0.5;
-  const radius = Math.min(width, height) / 2 - 190;
+  const radius = Math.min(width, height) / 2 - 20;
 
   const tree = d3
     .cluster()
@@ -19,7 +25,7 @@ function createRadialClusterTreeChart(data) {
     .attr('width', width)
     .attr('height', height)
     .attr('viewBox', [-cx, -cy, width, height])
-    .attr('style', 'width: 100%; height: auto; font: 10px sans-serif;')
+    .attr('style', 'width: auto; height: auto;')
     .call(
       // enables zoom and pann
       d3
@@ -63,7 +69,8 @@ function createRadialClusterTreeChart(data) {
     )
     .attr('fill', d => (d.children ? d.data.nodeColour : d.data.nodeColour))
     .attr('id', d => `${d.data.id}`)
-    .attr('r', 3.5);
+    .attr('class', d => `concept-${d.data.id}`)
+    .attr('r', 2.5);
 
   // Append labels
   chartGroup
@@ -87,78 +94,12 @@ function createRadialClusterTreeChart(data) {
     .attr('text-anchor', d => (d.x < Math.PI === !d.children ? 'start' : 'end'))
     //.attr('paint-order', 'stroke')
     //.attr('stroke', 'white')
-    .attr('fill', 'white')
+    .attr('fill', 'white') // 'currentColor'
     .style('opacity', d => `${d.data.showLabel}`)
     .attr('id', d => `label-${d.data.id}`)
     .text(d => d.data.name);
 
-  // Functions to show and hide label text
-  function showLabel(d) {
-    d3.selectAll(`#label-${this.id}`).style('opacity', 1).attr('font-size', 20);
-  }
-
-  function hideLabel(d) {
-    d3.selectAll(`#label-${this.id}`).style('opacity', 0).attr('font-size', 0);
-  }
-
-  async function showDetails(d) {
-    const detailQuery = `
-    PREFIX obok: <http://example.org/OBOK/>
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX dcterms: <http://purl.org/dc/terms/>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX boka: <http://example.org/BOKA/>
-    PREFIX org: <http://www.w3.org/ns/org#>
-
-    SELECT ?description ?fullConceptName (GROUP_CONCAT(DISTINCT ?expertName; SEPARATOR = " || ") AS ?expertList) (GROUP_CONCAT(DISTINCT ?organisationName; SEPARATOR = " || ") AS ?organisationList) WHERE {
-      ?concept rdf:type obok:Concept;
-        rdfs:label ?fullConceptName;
-        dcterms:description ?description.
-      OPTIONAL {
-        ?concept boka:personWithKnowledge ?expert.
-        ?expert rdfs:label ?expertName ;
-               	org:memberOf ?organisation .
-        ?organisation rdfs:label ?organisationName .
-      }
-      FILTER(CONTAINS(str(?concept),"${this.id}"))
-    }
-    GROUP BY ?fullConceptName ?description
-    `;
-    const sparqlResponse = await genericSPARQLQuery(detailQuery);
-
-    const description = sparqlResponse.results.bindings[0].description.value;
-    const fullConceptName =
-      sparqlResponse.results.bindings[0].fullConceptName.value;
-
-    const expertList =
-      sparqlResponse.results.bindings[0].expertList.value.split(' || ');
-
-    let expertHtmlList = '<ul>';
-    expertList.forEach(expert => {
-      expertHtmlList += `<li>${expert}</li>`;
-    });
-    expertHtmlList += '</ul>';
-
-    const organisationList =
-      sparqlResponse.results.bindings[0].organisationList.value.split(' || ');
-
-    let organisationHtmlList = '<ul>';
-    organisationList.forEach(organisation => {
-      organisationHtmlList += `<li>${organisation}</li>`;
-    });
-    organisationHtmlList += '</ul>';
-
-    let detailsHtml = `<h2>${fullConceptName}</h2>
-    <h4>People with knowledge of this concept:</h4>
-    ${expertHtmlList}
-    <h4>Organisations with knowledge of this concept:</h4>
-    ${organisationHtmlList}
-    <h4>Description:</h4>
-    <p>${description}</p>
-    `;
-    document.getElementById('detailsSection').innerHTML = detailsHtml;
-  }
-
+  // Enables the interacive functions when hovering over a circle/ node in the graph.
   chartGroup
     .selectAll('circle')
     .on('mouseover.details', showDetails)

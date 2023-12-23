@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EO4GEO Knowledge Graph and Applications</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="logo-container">
+        <img src=".\src\images\BoKVisulization-inline-800x124.png" id="logo" />
+      </div>
+      <div class="menu-bar" id="menuBar">
+        <a href="index.html" class="menu-item">Knowledge Footprints</a>
+        <a href="#" class="menu-item">Footprint Matching</a>
+        <a href="KGmanagement.html" class="menu-item active"
+          >Knowledge Graph Management</a
+        >
+      </div>
+    </div>
+
+    <div class="bok-mangement-container">
+      <div class="mid-left-side">
+        <form class="user-input-form">
+          <label for="dropdownOrganisations-Delete"
+            >1. Choose organisation</label
+          >
+          <select id="dropdownOrganisations-Delete" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <label for="dropdownExperts-Delete">2. Update expertise of</label>
+          <select id="dropdownExperts-Delete" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <label for="dropdownConcepts-Delete"
+            >3. Choose concept to delete</label
+          >
+          <select id="dropdownConcepts-Delete" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <input id="submitButton-Delete" type="submit" value="Delete" />
+        </form>
+      </div>
+      <div class="mid-right-side">
+        <form class="user-input-form">
+          <label for="dropdownOrganisations-Add">1. Choose organisation</label>
+          <select id="dropdownOrganisations-Add" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <label for="dropdownExperts-Add">2. Update expertise of</label>
+          <select id="dropdownExperts-Add" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <label for="dropdownConcepts-Add">3. Choose concept to add</label>
+          <select id="dropdownConcepts-Add" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <input id="submitButton-Add" type="submit" value="Add" />
+        </form>
+      </div>
+    </div>
+    <script type="module" src="src/js/knowledgeGraphManagement.js"></script>
+  </body>
+</html>

@@ -9,17 +9,18 @@
   </head>
 
   <body>
-    <header>
+    <div class="header">
       <div class="logo-container">
         <img src=".\src\images\BoKVisulization-inline-800x124.png" id="logo" />
       </div>
       <div class="menu-bar" id="menuBar">
-        <a href="#" class="menu-item active">Knowledge Footprints</a>
+        <a href="index.html" class="menu-item active">Knowledge Footprints</a>
         <a href="#" class="menu-item">Footprint Matching</a>
-        <a href="#" class="menu-item">Knowledge Graph</a>
-        <a href="#" class="menu-item">Ontology</a>
+        <a href="KGmanagement.html" class="menu-item"
+          >Knowledge Graph Management</a
+        >
       </div>
-    </header>
+    </div>
 
     <div class="container">
       <div class="left-side">
@@ -37,33 +38,38 @@
             <option value="" disabled selected>Select</option>
             <option value="Radial-Cluster-Tree">Radial Cluster Tree</option>
             <option value="Radial-Tidy-Tree">Radial Tidy Tree</option>
+            <option value="Tree-Map">Tree Map</option>
+            <option value="Zoomable-Tree-Map">Zoomable Tree Map</option>
+            <option value="Nested-Tree-Map">Nested Tree Map</option>
+            <option value="Force-Directed-Tree">Force Directed Tree</option>
+            <option value="Circle-Packing">Circle Packing</option>
           </select>
           <label for="dropdownFootprintEntity">Footprint of whom?</label>
           <select id="dropdownFootprintEntity" class="dropdown-menu">
             <option value="" disabled selected>Select</option>
           </select>
-          <input id="submitButton" type="submit" value="Generate Footprint" />
+          <input
+            id="submitButton-Generate-Footprint"
+            type="submit"
+            value="Generate Footprint"
+          />
         </form>
         <div id="detailsSection" class="left-side">
           <!-- Details will be displayed here -->
         </div>
       </div>
       <div id="right-side" class="right-side">
+        <div class="search-container">
+          <input
+            type="text"
+            placeholder="Search for concepts..."
+            id="searchBar"
+            class="search-bar"
+          />
+        </div>
         <!-- locatie voor sparql output en D3 visualisaties. -->
       </div>
     </div>
-
-    <script>
-      document
-        .getElementById('menuBar')
-        .addEventListener('click', function (event) {
-          if (event.target.classList.contains('menu-item')) {
-            let items = document.querySelectorAll('.menu-item');
-            items.forEach(item => item.classList.remove('active'));
-            event.target.classList.add('active');
-          }
-        });
-    </script>
     <script type="module" src="src/js/main.js"></script>
   </body>
 </html>

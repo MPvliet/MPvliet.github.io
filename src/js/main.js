@@ -1,7 +1,22 @@
 import { createRadialClusterTreeChart } from './d3/radialClusterTree.js';
 import { createRadialTidyTreeChart } from './d3/radialTidyTree.js';
-import { transformSPARQLtoD3Hierarchie } from './d3/sparqlToD3Hierarchie.js';
+import { createTreeMap } from './d3/treeMap.js';
+import { createZoomableTreeMap } from './d3/zoomableTreeMap.js';
+import { createNestedTreeMap } from './d3/nestedTreeMap.js';
+import { createForceDirectedTree } from './d3/forceDirectedTree.js';
+import { createCirclePacking } from './d3/circlePacking.js';
+import { transformSPARQLtoD3Hierarchie } from './sparql/sparqlToD3Hierarchie.js';
 import { genericSPARQLQuery } from './sparql/genericSPARQLQuery.js';
+import { getAllOrganisations } from './sparql/getAllOrganisations.js';
+import { getAllExpertsFromOrganisation } from './sparql/getAllExpertsFromOrganisation.js';
+import { searchConceptInD3Vis } from './d3/interactiveD3Functionalities.js';
+
+// Search bar functionality - Highlight node.
+document
+  .getElementById('searchBar')
+  .addEventListener('input', function (event) {
+    searchConceptInD3Vis(event.target.value);
+  });
 
 // Fills the HTML form based on type of footprint input.
 document
@@ -10,9 +25,9 @@ document
     createEntityDropDownList(this.value);
   });
 
-// Processes what happens once you click submit
+// Processes what happens once you click Generate Footprint
 document
-  .getElementById('submitButton')
+  .getElementById('submitButton-Generate-Footprint')
   .addEventListener('click', async event => {
     event.preventDefault(); // Without this the page refreshes once I click the submit button, but I want JS to process form input, not refresh.
 
@@ -37,7 +52,7 @@ document
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       
-      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize WHERE {
+      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize ?nodeValue WHERE {
         {
           ?concept rdf:type obok:Concept;
             rdfs:label ?conceptName;
@@ -58,6 +73,7 @@ document
           BIND("#f0cd02" AS ?nodeColour)
           BIND(0 AS ?showLabel)
           BIND(0 AS ?labelSize)
+          BIND(1 AS ?nodeValue)
         }
         UNION
         {
@@ -79,7 +95,8 @@ document
           })
           BIND("#f03502" AS ?nodeColour)
           BIND(1 AS ?showLabel)
-          BIND(20 AS ?labelSize)
+          BIND(16 AS ?labelSize)
+          BIND(1 AS ?nodeValue)
         }
       }
       `;
@@ -93,7 +110,7 @@ document
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize WHERE {
+      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize ?nodeValue WHERE {
         {
           ?concept rdf:type obok:Concept;
             rdfs:label ?conceptName;
@@ -114,6 +131,7 @@ document
           BIND("#f0cd02" AS ?nodeColour)
           BIND(0 AS ?showLabel)
           BIND(0 AS ?labelSize)
+          BIND(1 AS ?nodeValue)
         }
         UNION
         {
@@ -135,7 +153,8 @@ document
           })
           BIND("#f03502" AS ?nodeColour)
           BIND(1 AS ?showLabel)
-          BIND(20 AS ?labelSize)
+          BIND(16 AS ?labelSize)
+          BIND(1 AS ?nodeValue)
         }
       }
       `;
@@ -145,6 +164,11 @@ document
     const visualisationFunction = {
       'Radial-Cluster-Tree': createRadialClusterTreeChart,
       'Radial-Tidy-Tree': createRadialTidyTreeChart,
+      'Tree-Map': createTreeMap,
+      'Zoomable-Tree-Map': createZoomableTreeMap,
+      'Nested-Tree-Map': createNestedTreeMap,
+      'Force-Directed-Tree': createForceDirectedTree,
+      'Circle-Packing': createCirclePacking,
     };
 
     try {
@@ -158,56 +182,11 @@ document
     }
   });
 
-async function getAllExperts() {
-  const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-  PREFIX boka: <http://example.org/BOKA/>
-  
-  select ?expertName 
-  where { 
-    ?expertURI rdf:type boka:Expert ;
-              foaf:name ?expertName ;
-  }`;
-
-  try {
-    const data = await genericSPARQLQuery(query);
-    const expertList = data['results']['bindings'].map(
-      expert => expert.expertName.value
-    );
-    return expertList.sort();
-  } catch (error) {
-    console.error('Fetch error:', error);
-    return [];
-  }
-}
-
-async function getAllOrganisations() {
-  const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-  PREFIX org: <http://www.w3.org/ns/org#>
-  
-  select ?organisationName 
-  where { 
-    ?orgURI rdf:type org:Organization ;
-              foaf:name ?organisationName ;
-  }`;
-
-  try {
-    const data = await genericSPARQLQuery(query);
-    const organisationList = data['results']['bindings'].map(
-      organisation => organisation.organisationName.value
-    );
-    return organisationList.sort();
-  } catch (error) {
-    console.error('Fetch error:', error);
-    return [];
-  }
-}
-
 async function createEntityDropDownList(footprintType) {
   if (footprintType === 'Individual') {
     try {
-      const expertList = await getAllExperts();
+      const organisation = ''; // For this one I want to return all Experts from every org.
+      const expertList = await getAllExpertsFromOrganisation(organisation);
       fillOrganisationAndPersonList(footprintType, expertList);
     } catch (error) {
       console.error('Error:', error);
@@ -227,8 +206,8 @@ function fillOrganisationAndPersonList(footprintType, list) {
     document.getElementById('dropdownFootprintEntity').innerHTML =
       '<option></option>';
   } else {
-    var options = '';
-    for (var entity of list) {
+    let options = '';
+    for (const entity of list) {
       options += '<option>' + entity + '</option>';
     }
     document.getElementById('dropdownFootprintEntity').innerHTML = options;

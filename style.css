@@ -4,14 +4,13 @@ html {
   padding: 0;
   font-family: Arial, sans-serif;
   color: #333; /* setting a default text color */
+  background-color: #0c1a1a;
 }
 
-header {
-  background-color: #0c1a1a; /* Light gray background for the header */
+.header {
   display: flex;
-  justify-content: start;
-  align-items: center;
-  width: 100%;
+  height: 80px;
+  top: 0;
 }
 
 .logo-container {
@@ -19,6 +18,7 @@ header {
   display: flex;
   align-items: center; /* This will vertically center the logo in the header */
   margin-left: 10px;
+  padding-right: 15px;
 }
 
 #logo {
@@ -28,12 +28,10 @@ header {
 
 .menu-bar {
   width: 80%;
-  height: 100px;
   display: flex;
   justify-content: start;
   align-items: center;
-  background-color: #0c1a1a; /* Light gray background for contrast */
-  padding: 0px;
+  padding: 20px 20px;
 }
 
 .menu-item {
@@ -56,27 +54,25 @@ header {
 .container {
   display: flex;
   flex-wrap: wrap;
-  height: 100vh;
+  height: calc(100vh - 80px);
 }
 
 .left-side {
   width: 20%;
   display: flex;
   flex-direction: column;
-  background-color: #0c1a1a;
-  color: #fff; /* setting the text color to white for better readability on dark background */
+  color: #fff;
 }
 
 .right-side {
+  position: relative;
   width: 80%;
-
-  background-color: #0c1a1a; /* #ffffff; /* Light gray background for visualization area */
 }
 
 .user-input-form {
   display: flex;
   padding-left: 15px;
-  padding-right: 2px;
+  padding-right: 15px;
   flex-direction: column;
   gap: 10px;
 }
@@ -94,7 +90,7 @@ header {
 label {
   font-weight: bold;
   margin-top: 10px;
-  color: #ddd; /* Lighter gray for better visibility on dark background */
+  color: #ddd;
 }
 
 .dropdown-menu {
@@ -102,17 +98,9 @@ label {
   padding: 5px;
   border-radius: 4px;
   border: 1px solid #ccc;
-  background-color: #ffffff; /* Lighter gray for dropdown on dark background */
-  color: #0e1d1f; /* Text color set to white for dropdown */
-}
-
-input[type='text'] {
-  padding: 50px 0px;
-  width: 100% - 2px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
   background-color: #ffffff;
-  color: #0e1d1f; /* Text color set to white for input */
+  color: #0e1d1f;
+  font-size: medium;
 }
 
 input[type='submit'] {
@@ -123,8 +111,46 @@ input[type='submit'] {
   cursor: pointer;
   border-radius: 4px;
   margin-top: 10px;
+  font-size: medium;
 }
 
 input[type='submit']:hover {
   background-color: #0056b3;
+}
+
+.search-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.search-bar {
+  height: 10px;
+  font-size: 16px;
+}
+
+input[type='text'] {
+  padding: 8px 8px;
+  width: 100% - 2px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  color: #0e1d1f;
+}
+
+.bok-mangement-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  align-items: start;
+  height: 100vh;
+}
+
+.mid-left-side,
+.mid-right-side {
+  padding-left: 80px;
+  padding-right: 80px;
+  padding-top: 80px;
+  font-size: x-large;
 }
