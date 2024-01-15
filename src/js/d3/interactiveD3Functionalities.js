@@ -18,7 +18,7 @@ async function showDetails() {
   PREFIX boka: <http://example.org/BOKA/>
   PREFIX org: <http://www.w3.org/ns/org#>
 
-  SELECT ?description ?fullConceptName (GROUP_CONCAT(DISTINCT ?expertName; SEPARATOR = " || ") AS ?expertList) (GROUP_CONCAT(DISTINCT ?organisationName; SEPARATOR = " || ") AS ?organisationList) WHERE {
+  SELECT ?concept ?description ?fullConceptName (GROUP_CONCAT(DISTINCT ?expertName; SEPARATOR = " || ") AS ?expertList) (GROUP_CONCAT(DISTINCT ?organisationName; SEPARATOR = " || ") AS ?organisationList) WHERE {
     ?concept rdf:type obok:Concept;
       rdfs:label ?fullConceptName;
       dcterms:description ?description.
@@ -30,7 +30,8 @@ async function showDetails() {
     }
     FILTER(CONTAINS(str(?concept),"${this.id}"))
   }
-  GROUP BY ?fullConceptName ?description
+  GROUP BY ?fullConceptName ?description ?concept
+  ORDER BY asc(?concept)
   `;
 
   // Performs a rest call to graphDB with the above query.

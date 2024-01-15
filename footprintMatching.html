@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EO4GEO Knowledge Graph and Applications</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="logo-container">
+        <img src=".\src\images\BoKVisulization-inline-800x124.png" id="logo" />
+      </div>
+      <div class="menu-bar" id="menuBar">
+        <a href="index.html" class="menu-item">Knowledge Footprints</a>
+        <a href="footprintMatching.html" class="menu-item active"
+          >Footprint Matching</a
+        >
+        <a href="knowledgeGraphManagement.html" class="menu-item"
+          >Knowledge Graph Management</a
+        >
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="left-side">
+        <form class="user-input-form">
+          <label for="typeOfFootprintDropDown"
+            >Type of Knowledge Footprint</label
+          >
+          <select id="typeOfFootprintDropDown" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+            <option value="Individual">Individual</option>
+            <option value="Organisational">Organisational</option>
+          </select>
+          <label for="typeOfVisualisationDropDown">Type of Visualisation</label>
+          <select id="typeOfVisualisationDropDown" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+            <option value="Radial-Cluster-Tree" selected>
+              Radial Cluster Tree
+            </option>
+          </select>
+          <label for="dropdownFootprintEntityFirst"
+            >Footprint of first entity</label
+          >
+          <select id="dropdownFootprintEntityFirst" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <label for="dropdownFootprintEntitySecond"
+            >Footprint of second entity</label
+          >
+          <select id="dropdownFootprintEntitySecond" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <div class="switch-container">
+            <label for="switchShowLabel">Show or Hide labels?</label>
+            <label class="switch">
+              <input id="switchShowLabel" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <input
+            id="submitButton-Generate-Footprint"
+            type="submit"
+            value="Generate Footprint"
+          />
+        </form>
+        <div id="detailsSection" class="left-side">
+          <!-- Details will be displayed here -->
+        </div>
+      </div>
+      <div id="right-side" class="right-side">
+        <div class="search-container">
+          <input
+            type="text"
+            placeholder="Search for concepts..."
+            id="searchBar"
+            class="search-bar"
+          />
+          <div id="d3Legend">
+            <h3 style="color: white">Legenda</h3>
+          </div>
+        </div>
+        <!-- locatie voor sparql output en D3 visualisaties. -->
+      </div>
+    </div>
+    <script type="module" src="src/js/footprintMatching.js"></script>
+  </body>
+</html>

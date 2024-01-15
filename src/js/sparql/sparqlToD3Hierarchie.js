@@ -9,7 +9,13 @@ function transformSPARQLtoD3Hierarchie(json) {
     const showLabel = item.showLabel.value;
     const labelSize = item.labelSize.value;
     const nodeValue = item.nodeValue.value;
-
+    const nodeValueFirstEntity = item.nodeValueFirstEntity
+      ? item.nodeValueFirstEntity.value
+      : null;
+    const nodeValueSecondEntity = item.nodeValueSecondEntity
+      ? item.nodeValueSecondEntity.value
+      : null;
+    const matched = item.matched ? item.matched.value : null;
     //console.log(parent, parentId, nodeColour, showLabel);
 
     if (!nodes.has(parent)) {
@@ -20,6 +26,10 @@ function transformSPARQLtoD3Hierarchie(json) {
         showLabel: showLabel,
         labelSize: labelSize,
         nodeValue: nodeValue,
+        nodeValueFirstEntity: nodeValueFirstEntity,
+        nodeValueSecondEntity: nodeValueSecondEntity,
+        matched: matched,
+        value: 1,
         children: [],
       });
     }
@@ -34,6 +44,13 @@ function transformSPARQLtoD3Hierarchie(json) {
     const child = item.childName ? item.childName.value : null; // not all concepts have childs. so without child equals null
     const childId = item.childID ? item.childID.value : null;
     const nodeValue = item.nodeValue.value;
+    const nodeValueFirstEntity = item.nodeValueFirstEntity
+      ? item.nodeValueFirstEntity.value
+      : null;
+    const nodeValueSecondEntity = item.nodeValueSecondEntity
+      ? item.nodeValueSecondEntity.value
+      : null;
+    const matched = item.matched ? item.matched.value : null;
 
     //console.log(parent, child, childId, nodeColour, showLabel);
 
@@ -45,6 +62,10 @@ function transformSPARQLtoD3Hierarchie(json) {
         showLabel: showLabel,
         labelSize: labelSize,
         nodeValue: nodeValue,
+        nodeValueFirstEntity: nodeValueFirstEntity,
+        nodeValueSecondEntity: nodeValueSecondEntity,
+        matched: matched,
+        value: 1,
       });
     }
 
@@ -64,7 +85,7 @@ function transformSPARQLtoD3Hierarchie(json) {
         binding => binding.childName && binding.childName.value === node.name
       )
   );
-  //console.log(d3DataStructure);
+  console.log(d3DataStructure);
   return d3DataStructure;
 }
 

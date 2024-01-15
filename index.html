@@ -15,8 +15,10 @@
       </div>
       <div class="menu-bar" id="menuBar">
         <a href="index.html" class="menu-item active">Knowledge Footprints</a>
-        <a href="#" class="menu-item">Footprint Matching</a>
-        <a href="KGmanagement.html" class="menu-item"
+        <a href="footprintMatching.html" class="menu-item"
+          >Footprint Matching</a
+        >
+        <a href="knowledgeGraphManagement.html" class="menu-item"
           >Knowledge Graph Management</a
         >
       </div>
@@ -48,6 +50,13 @@
           <select id="dropdownFootprintEntity" class="dropdown-menu">
             <option value="" disabled selected>Select</option>
           </select>
+          <div class="switch-container">
+            <label for="switchShowLabel">Show or Hide labels?</label>
+            <label class="switch">
+              <input id="switchShowLabel" type="checkbox" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
           <input
             id="submitButton-Generate-Footprint"
             type="submit"
@@ -66,10 +75,13 @@
             id="searchBar"
             class="search-bar"
           />
+          <div id="d3Legend">
+            <h3 style="color: white">Legenda</h3>
+          </div>
         </div>
         <!-- locatie voor sparql output en D3 visualisaties. -->
       </div>
     </div>
-    <script type="module" src="src/js/main.js"></script>
+    <script type="module" src="src/js/knowledgeFootprints.js"></script>
   </body>
 </html>
