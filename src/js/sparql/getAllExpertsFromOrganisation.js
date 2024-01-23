@@ -1,7 +1,20 @@
 import { genericSPARQLQuery } from './genericSPARQLQuery.js';
 
 async function getAllExpertsFromOrganisation(organisation) {
-  const query = `
+  let query;
+  if (organisation === '') {
+    query = `
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX boka: <http://example.org/BOKA/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  
+    SELECT ?expertName WHERE {
+      ?expertURI rdf:type boka:Expert;
+        foaf:name ?expertName.
+    } 
+    `;
+  } else {
+    query = `
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
     PREFIX boka: <http://example.org/BOKA/>
@@ -16,6 +29,7 @@ async function getAllExpertsFromOrganisation(organisation) {
         FILTER(CONTAINS(STR(?organisationName), "${organisation}"))
     } 
     `;
+  }
 
   try {
     const data = await genericSPARQLQuery(query);

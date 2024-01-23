@@ -85,7 +85,9 @@ function transformSPARQLtoD3Hierarchie(json) {
         binding => binding.childName && binding.childName.value === node.name
       )
   );
-  console.log(d3DataStructure);
+
+  d3DataStructure.children.sort((a, b) => a.name.localeCompare(b.name)); //Sorting the children so I can predict how the knowledge footprint draws, I'm doing this so the outher dougnut chart is in the right order.
+  // console.log(d3DataStructure);
   return d3DataStructure;
 }
 

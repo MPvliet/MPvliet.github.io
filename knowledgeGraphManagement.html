@@ -25,42 +25,104 @@
     </div>
 
     <div class="bok-mangement-container">
-      <div class="mid-left-side">
+      <div class="bok-management-form-topLeft">
         <form class="user-input-form">
-          <label for="dropdownOrganisations-Delete"
+          <h2 style="margin-bottom: 0; margin-top: 15; color: white">
+            Add an Organisation
+          </h2>
+          <label for="organisationName">1. Type organisation name:</label>
+          <input id="organisationName" type="text" placeholder="Type here" />
+          <input
+            id="submitButton-AddOrganisation"
+            type="submit"
+            value="Add Organisation"
+          />
+        </form>
+      </div>
+      <div class="bok-management-form-topRight">
+        <form class="user-input-form">
+          <h2 style="margin-bottom: 0; margin-top: 15; color: white">
+            Add expertise
+          </h2>
+          <!-- <label for="dropdownOrganisations-Add">1. Choose organisation</label>
+          <select id="dropdownOrganisations-Add" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select> -->
+          <label for="dropdownExperts-Add">1. Update expertise of person</label>
+          <select id="dropdownExperts-Add" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <label for="dropdownConcepts-Add">2. Choose concept to add</label>
+          <select id="dropdownConcepts-Add" class="dropdown-menu">
+            <option value="" disabled selected>Select</option>
+          </select>
+          <input
+            id="submitButton-Add-Expertise"
+            type="submit"
+            value="Add Expertise"
+          />
+        </form>
+      </div>
+      <div class="bok-management-form-midLeft">
+        <form class="user-input-form">
+          <h2 style="margin-bottom: 0; margin-top: 15; color: white">
+            Add a Person
+          </h2>
+          <label for="personName">1. Type name of person:</label>
+          <input id="personName" type="text" placeholder="Type here" />
+          <input id="submitButton-AddPerson" type="submit" value="Add Person" />
+        </form>
+      </div>
+      <div class="bok-management-form-midRight">
+        <form class="user-input-form">
+          <h2 style="margin-bottom: 0; margin-top: 15; color: white">
+            Delete expertise
+          </h2>
+          <!-- <label for="dropdownOrganisations-Delete"
             >1. Choose organisation</label
           >
           <select id="dropdownOrganisations-Delete" class="dropdown-menu">
             <option value="" disabled selected>Select</option>
-          </select>
-          <label for="dropdownExperts-Delete">2. Update expertise of</label>
+          </select> -->
+          <label for="dropdownExperts-Delete"
+            >1. Update expertise of person</label
+          >
           <select id="dropdownExperts-Delete" class="dropdown-menu">
             <option value="" disabled selected>Select</option>
           </select>
           <label for="dropdownConcepts-Delete"
-            >3. Choose concept to delete</label
+            >2. Choose concept to delete</label
           >
           <select id="dropdownConcepts-Delete" class="dropdown-menu">
             <option value="" disabled selected>Select</option>
           </select>
-          <input id="submitButton-Delete" type="submit" value="Delete" />
+          <input
+            id="submitButton-Delete-Expertise"
+            type="submit"
+            value="Delete Expertise"
+          />
         </form>
       </div>
-      <div class="mid-right-side">
+      <div class="bok-management-form-bottomLeft">
         <form class="user-input-form">
-          <label for="dropdownOrganisations-Add">1. Choose organisation</label>
-          <select id="dropdownOrganisations-Add" class="dropdown-menu">
+          <h2 style="margin-bottom: 0; margin-top: 15; color: white">
+            Link a Person to an Organisation
+          </h2>
+          <label for="dropdownExperts">1. Choose person</label>
+          <select id="dropdownExperts" class="dropdown-menu">
             <option value="" disabled selected>Select</option>
           </select>
-          <label for="dropdownExperts-Add">2. Update expertise of</label>
-          <select id="dropdownExperts-Add" class="dropdown-menu">
+          <label for="dropdownOrganisations"
+            >2. Choose organisation to link with</label
+          >
+          <select id="dropdownOrganisations" class="dropdown-menu">
             <option value="" disabled selected>Select</option>
           </select>
-          <label for="dropdownConcepts-Add">3. Choose concept to add</label>
-          <select id="dropdownConcepts-Add" class="dropdown-menu">
-            <option value="" disabled selected>Select</option>
-          </select>
-          <input id="submitButton-Add" type="submit" value="Add" />
+          <input
+            id="submitButton-LinkPersonToOrganisation"
+            type="submit"
+            value="Link person to organisation"
+          />
         </form>
       </div>
     </div>

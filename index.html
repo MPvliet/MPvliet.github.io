@@ -46,9 +46,21 @@
             <option value="Force-Directed-Tree">Force Directed Tree</option>
             <option value="Circle-Packing">Circle Packing</option>
           </select>
-          <label for="dropdownFootprintEntity">Footprint of whom?</label>
+          <!-- Enable this if we wan't to go back to a predefined list of org / persons 
+          <label for="dropdownFootprintEntity">Footprint of Whom?</label> 
           <select id="dropdownFootprintEntity" class="dropdown-menu">
             <option value="" disabled selected>Select</option>
+          </select> -->
+          <label for="dropdownFootprintEntity">Footprint of Whom?</label>
+          <input
+            id="dropdownFootprintEntity"
+            type="text"
+            placeholder="Type here"
+          />
+          <label for="chooseDataVersion">Show Original or Revised Data</label>
+          <select id="chooseDataVersion" class="dropdown-menu">
+            <option value="Original" selected>Original</option>
+            <option value="Revised">Revised</option>
           </select>
           <div class="switch-container">
             <label for="switchShowLabel">Show or Hide labels?</label>
@@ -63,6 +75,9 @@
             value="Generate Footprint"
           />
         </form>
+        <div id="includedEntitySection" class="left-side">
+          <!-- Included entities that are returned by the query get parsed here -->
+        </div>
         <div id="detailsSection" class="left-side">
           <!-- Details will be displayed here -->
         </div>

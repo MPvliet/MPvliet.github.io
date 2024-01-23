@@ -4,7 +4,7 @@ async function insertSPARQLStatement(insertQuery) {
 
   try {
     const response = await fetch(
-      `http://localhost:7200/repositories/EO4GEOKG/statements`,
+      `http://130.89.24.53:7200/repositories/EO4GEOKG/statements`,
       {
         method: 'POST',
         body: formData,

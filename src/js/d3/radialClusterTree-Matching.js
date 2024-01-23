@@ -22,7 +22,8 @@ function createRadialClusterTreeChartForMatching(data) {
   const root = tree(d3.hierarchy(data));
 
   const svg = d3
-    .create('svg')
+    .select('.right-side')
+    .append('svg')
     .attr('width', width)
     .attr('height', height)
     .attr('viewBox', [-cx, -cy, width, height])
@@ -76,15 +77,14 @@ function createRadialClusterTreeChartForMatching(data) {
               'd',
               d3
                 .linkRadial()
-                .angle(d => d.x)
-                .radius(d => d.y)
+                .angle(d => d.x - 0.0025)
+                .radius(d => d.y - 2)
             )
             .attr('stroke', color)
             .attr('fill', 'none')
             .attr('stroke-width', 2.5)
-            .style('stroke-dasharray', '0, 2, 2, 2')
+            // .style('stroke-dasharray', '0, 2, 2, 2')
             .attr('stroke-opacity', 1);
-          //.attr('transform', 'translate(-1.5,-1.5)');
         });
       } else if (color === 'orange') {
         linksToNode.forEach(link => {
@@ -96,39 +96,17 @@ function createRadialClusterTreeChartForMatching(data) {
               'd',
               d3
                 .linkRadial()
-                .angle(d => d.x)
-                .radius(d => d.y)
+                .angle(d => d.x + 0.0025)
+                .radius(d => d.y + 2)
             )
             .attr('stroke', color)
             .attr('fill', 'none')
             .attr('stroke-width', 2.5)
-            .style('stroke-dasharray', '0, 2, 2, 2')
-            .style('stroke-dashoffset', 2)
-            .attr('stroke-opacity', 1);
-          //.attr('transform', 'translate(1.5,1.5)');
-        });
-      } else if (color === 'red') {
-        linksToNode.forEach(link => {
-          chartGroup
-            .append('path')
-            .data([link])
-            .join('path')
-            .attr(
-              'd',
-              d3
-                .linkRadial()
-                .angle(d => d.x)
-                .radius(d => d.y)
-            )
-            .attr('stroke', color)
-            .attr('fill', 'none')
-            .attr('stroke-width', 2.5)
-            .style('stroke-dasharray', '0, 2, 2, 2')
-            .style('stroke-dashoffset', 4)
+            // .style('stroke-dasharray', '0, 2, 2, 2')
+            // .style('stroke-dashoffset', 2)
             .attr('stroke-opacity', 1);
         });
       }
-
       currentNode = currentNode.parent; // Move to the parent node
     }
   }
@@ -148,9 +126,6 @@ function createRadialClusterTreeChartForMatching(data) {
       ) {
         colorPathToRoot(node, 'orange');
       }
-      // if (node.data.matched === 'Match') {
-      //   colorPathToRoot(node, 'red');
-      // }
     });
 
   // Append nodes
@@ -167,13 +142,11 @@ function createRadialClusterTreeChartForMatching(data) {
     .attr('fill-opacity', d => (parseInt(d.data.showLabel) === 1 ? 1 : 0.2)) // using showLabel here might be a bit weird, but it tells me the node should be coloured aswell.
     .attr('id', d => `${d.data.id}`)
     .attr('class', d => `concept-${d.data.id}`)
-    .attr('r', d => (parseInt(d.data.showLabel) === 1 ? 4 : 2.5));
+    .attr('r', d => (parseInt(d.data.showLabel) === 1 ? 3.5 : 2.5));
 
   // Append labels
   chartGroup
     .append('g')
-    //.attr('stroke-linejoin', 'round')
-    //.attr('stroke-width', 3)
     .selectAll()
     .data(root.descendants())
     .join('text')
@@ -189,8 +162,6 @@ function createRadialClusterTreeChartForMatching(data) {
     .attr('dy', '0.31em')
     .attr('x', d => (d.x < Math.PI === !d.children ? 6 : -6))
     .attr('text-anchor', d => (d.x < Math.PI === !d.children ? 'start' : 'end'))
-    //.attr('paint-order', 'stroke')
-    //.attr('stroke', 'white')
     .attr('fill', 'white') // 'currentColor'
     .style('opacity', '0') //.style('opacity', d => `${d.data.showLabel}`)
     .attr('id', d => `label-${d.data.id}`)
@@ -206,124 +177,124 @@ function createRadialClusterTreeChartForMatching(data) {
 
   const legendData = [
     {
-      color: 'green',
+      color: '#008000',
       label: 'Knowledge Path First Entity',
       type: 'line',
       rowHeight: 0,
     },
     {
-      color: 'orange',
+      color: '#FFA500',
       label: 'Knowledge Path Second Entity',
       type: 'line',
       rowHeight: 20,
     },
     {
-      color: 'red',
-      label: 'Matched Knowledge Path',
-      type: 'line',
+      color: '#FFFF00',
+      label: 'EO4GEO Concepts',
+      type: 'circle',
       rowHeight: 40,
     },
     {
-      color: '#ffd966',
-      label: 'EO4GEO Concepts',
+      color: '#008000',
+      label: 'Knowledge of First Entity',
       type: 'circle',
       rowHeight: 60,
     },
     {
-      color: '#ff4c4c',
-      label: 'Knowledge of EO4GEO Concept',
+      color: '#FFA500',
+      label: 'Knowledge of Second Entity',
       type: 'circle',
       rowHeight: 80,
     },
     {
-      color: '#7E10E1',
+      color: '#FF0000',
       label: 'Matched Knowledge of EO4GEO Concept',
       type: 'circle',
-      rowHeight: 115,
+      rowHeight: 100,
     },
     {
       color: '#a3d8f4',
       label: '[AM] Analytical Methods',
       type: 'rect',
-      rowHeight: 150,
+      rowHeight: 135,
     },
     {
       color: '#ff6f61',
       label: '[CF] Conceptual Foundations',
       type: 'rect',
-      rowHeight: 170,
+      rowHeight: 155,
     },
     {
       color: '#dab894',
       label: '[CV] Cartography and Visualization',
       type: 'rect',
-      rowHeight: 195,
+      rowHeight: 175,
     },
     {
       color: '#54AAAF',
       label: '[DA] Design and Setup of Geographic Information Systems',
       type: 'rect',
-      rowHeight: 235,
+      rowHeight: 210,
     },
     {
       color: '#fffdd0',
       label: '[DM] Data Modeling, Storage and Exploitation',
       type: 'rect',
-      rowHeight: 285,
+      rowHeight: 265,
     },
     {
       color: '#36454f',
       label: '[GC] Geocomputation',
       type: 'rect',
-      rowHeight: 315,
+      rowHeight: 300,
     },
     {
       color: '#40e0d0',
       label: '[GD] Geospatial Data',
       type: 'rect',
-      rowHeight: 335,
+      rowHeight: 320,
     },
     {
       color: '#fadadd',
       label: '[GS] GI and Society',
       type: 'rect',
-      rowHeight: 355,
+      rowHeight: 340,
     },
     {
       color: '#009473',
       label: '[IP] Image Processing and Analysis',
       type: 'rect',
-      rowHeight: 375,
+      rowHeight: 360,
     },
     {
       color: '#93C572',
       label: '[OI] Organizational and Institutional Aspects',
       type: 'rect',
-      rowHeight: 405,
+      rowHeight: 390,
     },
     {
       color: '#c0c0c0',
       label: '[PP] Physical Principles',
       type: 'rect',
-      rowHeight: 435,
+      rowHeight: 420,
     },
     {
       color: '#F47D4D',
       label: '[PS] Platforms, Sensors and Digital Imagery',
       type: 'rect',
-      rowHeight: 455,
+      rowHeight: 440,
     },
     {
       color: '#D7837F',
       label: '[TA] Thematic and Application Domains',
       type: 'rect',
-      rowHeight: 485,
+      rowHeight: 470,
     },
     {
       color: '#98ff98',
       label: '[WB] Web-based GI',
       type: 'rect',
-      rowHeight: 515,
+      rowHeight: 500,
     },
   ];
 
@@ -331,8 +302,6 @@ function createRadialClusterTreeChartForMatching(data) {
   createLegend(legendData, `#d3Legend`);
   // Creates the outerDoughnut d3 chart
   radialClusterOuterDoughnut(root, radius, chartGroup);
-
-  document.getElementById('right-side').appendChild(svg.node());
 }
 
 export { createRadialClusterTreeChartForMatching };

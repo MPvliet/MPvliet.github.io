@@ -22,12 +22,11 @@ function createRadialClusterTreeChart(data) {
   const root = tree(d3.hierarchy(data));
 
   const svg = d3
-    .select('.right-side')
-    .append('svg')
+    .create('svg')
     .attr('width', width)
     .attr('height', height)
     .attr('viewBox', [-cx, -cy, width, height])
-    .attr('style', 'width: 100%; height: auto;')
+    .attr('style', 'width: auto; height: auto;')
     .call(
       // enables zoom and pann
       d3
@@ -35,16 +34,13 @@ function createRadialClusterTreeChart(data) {
         .scaleExtent([0.5, 5])
         .on('zoom', e => {
           chartGroup.attr('transform', e.transform);
+          labelGroup.attr('transform', e.transform);
         })
     );
 
   // Group to hold all chart elements, paths, nodes and labels.
   const chartGroup = svg.append('g').attr('name', 'chartGroup');
-
-  // const radialPath = d3
-  //   .linkRadial()
-  //   .angle(d => d.x)
-  //   .radius(d => d.y);
+  const labelGroup = svg.append('g').attr('name', 'labelGroup');
 
   // Append links
   chartGroup
@@ -63,25 +59,6 @@ function createRadialClusterTreeChart(data) {
         .angle(d => d.x)
         .radius(d => d.y)
     )
-    // .attr('d', function (d) {
-    //   // https://stackoverflow.com/questions/58100069/d3-j-mixing-radial-tree-with-link-straight-tree
-    //   let adjust = 1.5708; //90 degrees in radians
-
-    //   // calculate the start and end points of the path, using trig
-    //   let sourceX = d.source.y * Math.cos(d.source.x - adjust);
-    //   let sourceY = d.source.y * Math.sin(d.source.x - adjust);
-    //   let targetX = d.target.y * Math.cos(d.target.x - adjust);
-    //   let targetY = d.target.y * Math.sin(d.target.x - adjust);
-
-    //   // if the source node is at the centre, depth = 0, then create a straight path using the L (lineto) SVG path. Else, use the radial path
-    //   if (d.source.depth == 0) {
-    //     return (
-    //       'M' + sourceX + ' ' + sourceY + ' ' + 'L' + targetX + ' ' + targetY
-    //     );
-    //   } else {
-    //     return radialPath(d);
-    //   }
-    // })
     .attr('source', d => `${d.source.data.name}`)
     .attr('target', d => `${d.target.data.name}`);
 
@@ -122,13 +99,60 @@ function createRadialClusterTreeChart(data) {
     .attr('class', d => `concept-${d.data.id}`)
     .attr('r', 2.5);
 
-  // Append labels
-  chartGroup
+  // // Append labels
+  // chartGroup
+  //   .append('g')
+  //   //.attr('stroke-linejoin', 'round')
+  //   //.attr('stroke-width', 3)
+  //   .selectAll()
+  //   .data(root.descendants())
+  //   .join('text')
+  //   .attr(
+  //     'transform',
+  //     d =>
+  //       `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0) rotate(${
+  //         d.x >= Math.PI ? 180 : 0
+  //       })`
+  //   )
+  //   .attr('font-family', 'Segoe UI')
+  //   .attr('font-size', d => `${d.data.labelSize}`)
+  //   .attr('dy', '0.31em')
+  //   .attr('x', d => (d.x < Math.PI === !d.children ? 6 : -6))
+  //   .attr('text-anchor', d => (d.x < Math.PI === !d.children ? 'start' : 'end'))
+  //   //.attr('paint-order', 'stroke')
+  //   //.attr('stroke', 'white')
+  //   .attr('fill', 'white') // 'currentColor'
+  //   .style('opacity', d => `${d.data.showLabel}`)
+  //   .attr('id', d => `label-${d.data.id}`)
+  //   .attr('class', d => (parseInt(d.data.showLabel) === 1 ? 'hasLabel' : ''))
+  //   .text(d => d.data.name);
+
+  // Creating the datastructure for force directed nodes/labels.
+  let nodesThatNeedALabel = [];
+  root.descendants().forEach(node => {
+    if (node.data.showLabel === '1') {
+      const nodeLabel = {
+        id: node.data.id,
+        name: node.data.name,
+        x: node.x,
+        y: node.y,
+      };
+      nodesThatNeedALabel.push(nodeLabel);
+    }
+  });
+
+  const simulation = d3
+    .forceSimulation(nodesThatNeedALabel)
+    .force('collision', d3.forceCollide())
+    .force('charge', d3.forceManyBody().strength(0.5))
+    .force('x', d3.forceX())
+    .force('y', d3.forceY())
+    .alphaTarget(0);
+
+  const nodeLabelText = labelGroup
     .append('g')
-    //.attr('stroke-linejoin', 'round')
-    //.attr('stroke-width', 3)
-    .selectAll()
-    .data(root.descendants())
+    .selectAll('text')
+    .data(nodesThatNeedALabel)
     .join('text')
     .attr(
       'transform',
@@ -137,18 +161,15 @@ function createRadialClusterTreeChart(data) {
           d.x >= Math.PI ? 180 : 0
         })`
     )
-    .attr('font-family', 'Segoe UI')
-    .attr('font-size', d => `${d.data.labelSize}`)
-    .attr('dy', '0.31em')
-    .attr('x', d => (d.x < Math.PI === !d.children ? 6 : -6))
-    .attr('text-anchor', d => (d.x < Math.PI === !d.children ? 'start' : 'end'))
-    //.attr('paint-order', 'stroke')
-    //.attr('stroke', 'white')
-    .attr('fill', 'white') // 'currentColor'
-    .style('opacity', d => `${d.data.showLabel}`)
-    .attr('id', d => `label-${d.data.id}`)
-    .attr('class', d => (parseInt(d.data.showLabel) === 1 ? 'hasLabel' : ''))
-    .text(d => d.data.name);
+    .attr('fill', 'white')
+    .attr('class', 'hasLabel')
+    .attr('text-anchor', d => (d.x < Math.PI ? 'start' : 'end'))
+    .text(d => d.name)
+    .call(drag(simulation));
+
+  simulation.on('tick', () => {
+    nodeLabelText.attr('x', d => d.x).attr('y', d => d.y);
+  });
 
   // Enables the interacive functions when hovering over a circle/ node in the graph.
   chartGroup
@@ -262,6 +283,33 @@ function createRadialClusterTreeChart(data) {
 
   // Creates the outerDoughnut d3 chart
   radialClusterOuterDoughnut(root, radius, chartGroup);
+
+  document.getElementById('right-side').appendChild(svg.node());
 }
+
+const drag = simulation => {
+  function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+
+  function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+
+  return d3
+    .drag()
+    .on('start', dragstarted)
+    .on('drag', dragged)
+    .on('end', dragended);
+};
 
 export { createRadialClusterTreeChart };

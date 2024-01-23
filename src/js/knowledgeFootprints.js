@@ -29,12 +29,16 @@ document
     searchConceptInD3Vis(event.target.value);
   });
 
+/* Enable this if we want to go back to a predefined list of all org or persons in the KG.
+
 // Fills the HTML form based on type of footprint input.
 document
   .getElementById('typeOfFootprintDropDown')
   .addEventListener('change', function () {
     createEntityDropDownList(this.value);
   });
+
+*/
 
 // Processes what happens once you click Generate Footprint
 document
@@ -45,12 +49,24 @@ document
     const visualisationType = document.getElementById(
       'typeOfVisualisationDropDown'
     ).value;
+
     const footprintType = document.getElementById(
       'typeOfFootprintDropDown'
     ).value;
+
     const footprintEntity = document.getElementById(
       'dropdownFootprintEntity'
     ).value;
+
+    const namedGraphDecision =
+      document.getElementById('chooseDataVersion').value;
+
+    let namedGraph;
+    if (namedGraphDecision === 'Original') {
+      namedGraph = 'FROM eo4geo:applications FROM eo4geo:concepts';
+    } else if (namedGraphDecision === 'Revised') {
+      namedGraph = 'FROM eo4geo:applications-revised FROM eo4geo:concepts';
+    }
 
     let query;
     if (footprintType === 'Individual') {
@@ -61,11 +77,12 @@ document
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX boka: <http://example.org/BOKA/>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      PREFIX eo4geo: <https://bok.eo4geo.eu/>
 
-      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize ?nodeValue WHERE {
+      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize ?nodeValue ${namedGraph} WHERE {
         {
           SELECT ?concept ?conceptName ?childName ?conceptID ?childID (IF(?knownByFirstEntity, 1 , 0 ) AS ?nodeValue) WHERE {
-            ?concept rdf:type obok:Concept;
+            ?concept rdf:type skos:Concept;
               rdfs:label ?conceptName;
               skos:notation ?conceptID.
             OPTIONAL {
@@ -95,11 +112,12 @@ document
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX org: <http://www.w3.org/ns/org#>
       PREFIX boka: <http://example.org/BOKA/>
+      PREFIX eo4geo: <https://bok.eo4geo.eu/>
 
-      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize ?nodeValue WHERE {
+      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize ?nodeValue ${namedGraph} WHERE {
         {
           SELECT ?concept ?conceptName ?childName ?conceptID ?childID (IF(?knownByFirstEntity, 1 , 0 ) AS ?nodeValue) WHERE {
-            ?concept rdf:type obok:Concept;
+            ?concept rdf:type skos:Concept;
               rdfs:label ?conceptName;
               skos:notation ?conceptID.
             OPTIONAL {
@@ -124,6 +142,33 @@ document
       `;
     }
 
+    let queryIncludedEntities;
+    if (footprintType === 'Individual') {
+      queryIncludedEntities = `
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX boka: <http://example.org/BOKA/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+    SELECT DISTINCT ?expertName WHERE {
+      ?expertURI rdf:type boka:Expert;
+        foaf:name ?expertName .
+      FILTER(CONTAINS(STR(?expertName), "${footprintEntity}"))
+    } ORDER BY ?expertName
+    `;
+    } else if (footprintType === 'Organisational') {
+      queryIncludedEntities = `
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX org: <http://www.w3.org/ns/org#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+    SELECT DISTINCT ?organisationName WHERE {
+      ?organisationURI rdf:type org:Organization;
+        rdfs:label ?organisationName.
+      FILTER(CONTAINS(STR(?organisationName), "${footprintEntity}"))
+    } ORDER BY ?organisationName
+    `;
+    }
+
     // Defines which function to call to generate the chosen visualisationType
     const visualisationFunction = {
       'Radial-Cluster-Tree': createRadialClusterTreeChart,
@@ -138,6 +183,35 @@ document
     try {
       const sparqlResponse = await genericSPARQLQuery(query);
       const data = transformSPARQLtoD3Hierarchie(sparqlResponse);
+
+      const uniqueEntities = await genericSPARQLQuery(queryIncludedEntities);
+
+      let includedEntityList = '<ul style="margin-top: 0;">';
+      uniqueEntities.results.bindings.forEach(entitiy => {
+        if (footprintType === 'Individual') {
+          includedEntityList += `<li>${entitiy.expertName.value}</li>`;
+        } else if (footprintType === 'Organisational') {
+          includedEntityList += `<li>${entitiy.organisationName.value}</li>`;
+        }
+      });
+      includedEntityList += '</ul>';
+
+      let includedEntities;
+      if (footprintType === 'Individual') {
+        includedEntities = `
+      <h4 style="margin-bottom: 1;">Included individuals in this footprint</h4>
+      ${includedEntityList}
+      `;
+      } else if (footprintType === 'Organisational') {
+        includedEntities = `
+      <h4 style="margin-bottom: 1;">Included organisations  in this footprint</h4>
+      ${includedEntityList}
+      `;
+      }
+
+      document.getElementById('includedEntitySection').innerHTML =
+        includedEntities;
+
       visualisationFunction[visualisationType](data);
     } catch (error) {
       console.error('Error creating D3 visualisation: ', error);
@@ -145,6 +219,8 @@ document
         'Error creating D3 visualisation: ' + error.message;
     }
   });
+
+/* Enable this if we want to go back to a predefined list of all org or persons in the KG.
 
 async function createEntityDropDownList(footprintType) {
   if (footprintType === 'Individual') {
@@ -178,3 +254,5 @@ function fillOrganisationAndPersonList(footprintType, list) {
     document.getElementById('dropdownFootprintEntity').innerHTML = options;
   }
 }
+
+*/
