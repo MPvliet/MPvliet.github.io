@@ -19,20 +19,46 @@ document
 // Search bar functionality - Highlight node.
 document
   .getElementById('searchBar')
-  .addEventListener('input', function (event) {
-    searchConceptInD3Vis(event.target.value);
+  .addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+      searchConceptInD3Vis(event.target.value);
+    }
   });
-
-/* Enable this if we want to go back to a predefined list of all org or persons in the KG.
 
 // Fills the HTML form based on type of footprint input.
 document
   .getElementById('typeOfFootprintDropDown')
   .addEventListener('change', function () {
-    createEntityDropDownList(this.value);
+    // createEntityDropDownList(this.value); // Enable this if we want to go back to a predefined list of all org or persons in the KG.
+    if (this.value === 'Paper') {
+      document.getElementById('dropdownFootprintEntityFirstLabel').innerHTML =
+        'Footprint for the first Paper?';
+      document.getElementById('dropdownFootprintEntityFirst').placeholder =
+        'ex: doi.org/10.5194/agile-giss-2-25-2021';
+      document.getElementById('dropdownFootprintEntitySecondLabel').innerHTML =
+        'Footprint for the second Paper?';
+      document.getElementById('dropdownFootprintEntitySecond').placeholder =
+        'ex: doi.org/10.5194/agile-giss-2-21-2021';
+    } else if (this.value === 'Individual') {
+      document.getElementById('dropdownFootprintEntityFirstLabel').innerHTML =
+        'Footprint for the first Person?';
+      document.getElementById('dropdownFootprintEntityFirst').placeholder =
+        'ex: John Doe';
+      document.getElementById('dropdownFootprintEntitySecondLabel').innerHTML =
+        'Footprint for the second Person?';
+      document.getElementById('dropdownFootprintEntitySecond').placeholder =
+        'ex: Jane Doe';
+    } else if (this.value === 'Organisational') {
+      document.getElementById('dropdownFootprintEntityFirstLabel').innerHTML =
+        'Footprint for the first Organisation?';
+      document.getElementById('dropdownFootprintEntityFirst').placeholder =
+        'ex: University of Twente';
+      document.getElementById('dropdownFootprintEntitySecondLabel').innerHTML =
+        'Footprint for the second Organisation?';
+      document.getElementById('dropdownFootprintEntitySecond').placeholder =
+        'ex: Utrecht University';
+    }
   });
-
-*/
 
 // Processes what happens once you click Generate Footprint
 document
@@ -158,33 +184,95 @@ document
         BIND(IF((?nodeValueFirstEntity = 1 ) || (?nodeValueSecondEntity = 1 ), 1 , 0 ) AS ?showLabel)
       } ORDER BY ?conceptName
       `;
+    } else if (footprintType === 'Paper') {
+      query = `
+      PREFIX eo4geo: <https://bok.eo4geo.eu/>
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX bibo: <http://purl.org/ontology/bibo/>
+      PREFIX boka: <http://example.org/BOKA/>
+
+      SELECT ?conceptName ?childName ?conceptID ?childID ?nodeColour ?showLabel ?labelSize ?matched ?nodeValue ?nodeValueFirstEntity ?nodeValueSecondEntity ${namedGraph} WHERE {
+        { # returns all concepts with a possible direct childConcept
+          SELECT ?concept ?conceptName ?childName ?conceptID ?childID (IF(?knownByFirstEntity, 1 , 0 ) AS ?nodeValueFirstEntity) (IF(?knownBySecondEntity, 1 , 0 ) AS ?nodeValueSecondEntity) WHERE {
+            ?concept rdf:type skos:Concept;
+              rdfs:label ?conceptName;
+              skos:notation ?conceptID.
+            OPTIONAL {
+              ?concept skos:narrower ?child.
+              ?child rdfs:label ?childName;
+                skos:notation ?childID.
+            }
+                  
+            # Checks whether the first entity has knowledge of a ?concept if true, return true. The bind does this for every ?concept 
+            BIND(EXISTS {
+              ?paperURI rdf:type bibo:Report;
+                bibo:doi ?DOIPaper.
+              FILTER(CONTAINS(STR(?DOIPaper), "${footprintEntityFirst}"))
+              ?concept boka:describedIn ?paperURI.
+            } AS ?knownByFirstEntity)
+                  
+            # Checks whether the second entity has knowledge of a ?concept if true, return true. The bind does this for every ?concept 
+            BIND(EXISTS {
+              ?paperURI rdf:type bibo:Report;
+                bibo:doi ?DOIPaper.
+              FILTER(CONTAINS(STR(?DOIPaper), "${footprintEntitySecond}"))
+              ?concept boka:describedIn ?paperURI.
+            } AS ?knownBySecondEntity)
+          }
+        }
+        # applies the logic needed to create footprint matching.
+        BIND(IF((?nodeValueFirstEntity + ?nodeValueSecondEntity) = 2 , "Match", "noMatch") AS ?matched)
+        BIND(IF((?nodeValueFirstEntity + ?nodeValueSecondEntity) = 2 , "#FF0000", IF(?nodeValueFirstEntity = 1, "#008000", IF(?nodeValueSecondEntity = 1, "#FFA500" , "#FFFF00"))) AS ?nodeColour)
+        BIND(IF((?nodeValueFirstEntity = 1 ) || (?nodeValueSecondEntity = 1 ), 1 , 0 ) AS ?nodeValue)
+        BIND(IF((?nodeValueFirstEntity = 1 ) || (?nodeValueSecondEntity = 1 ), 16 , 0 ) AS ?labelSize)
+        BIND(IF((?nodeValueFirstEntity = 1 ) || (?nodeValueSecondEntity = 1 ), 1 , 0 ) AS ?showLabel)
+      } ORDER BY ?conceptName
+      `;
     }
 
     let queryIncludedEntities;
     if (footprintType === 'Individual') {
       queryIncludedEntities = `
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX boka: <http://example.org/BOKA/>
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX boka: <http://example.org/BOKA/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-    SELECT DISTINCT ?expertName WHERE {
-      ?expertURI rdf:type boka:Expert;
-        foaf:name ?expertName .
-      FILTER(CONTAINS(STR(?expertName), "${footprintEntityFirst}") || (CONTAINS(STR(?expertName), "${footprintEntitySecond}") ))
-    } ORDER BY ?expertName
-    `;
+        SELECT DISTINCT ?expertName WHERE {
+          ?expertURI rdf:type boka:Expert;
+            foaf:name ?expertName .
+          FILTER(CONTAINS(STR(?expertName), "${footprintEntityFirst}") || (CONTAINS(STR(?expertName), "${footprintEntitySecond}") ))
+        } ORDER BY ?expertName
+        `;
     } else if (footprintType === 'Organisational') {
       queryIncludedEntities = `
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX org: <http://www.w3.org/ns/org#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX org: <http://www.w3.org/ns/org#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-    SELECT DISTINCT ?organisationName WHERE {
-      ?organisationURI rdf:type org:Organization;
-        rdfs:label ?organisationName.
-      FILTER(CONTAINS(STR(?organisationName), "${footprintEntityFirst}") || (CONTAINS(STR(?organisationName), "${footprintEntitySecond}") ))
-    } ORDER BY ?organisationName
-    `;
+        SELECT DISTINCT ?organisationName WHERE {
+          ?organisationURI rdf:type org:Organization;
+            rdfs:label ?organisationName.
+          FILTER(CONTAINS(STR(?organisationName), "${footprintEntityFirst}") || (CONTAINS(STR(?organisationName), "${footprintEntitySecond}") ))
+        } ORDER BY ?organisationName
+        `;
+    } else if (footprintType === 'Paper') {
+      queryIncludedEntities = `
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX boka: <http://example.org/BOKA/>
+      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      PREFIX bibo: <http://purl.org/ontology/bibo/>
+      
+      SELECT DISTINCT ?expertName WHERE {
+        ?expertURI rdf:type boka:Expert;
+          foaf:name ?expertName;
+          boka:authorOf ?paperURI.
+        ?paperURI bibo:doi ?paperDOI.
+        FILTER((CONTAINS(STR(?paperDOI), "${footprintEntityFirst}")) || (CONTAINS(STR(?paperDOI), "${footprintEntitySecond}")))
+      }
+      ORDER BY (?expertName)
+      `;
     }
 
     // Defines which function to call to generate the chosen visualisationType
@@ -204,6 +292,8 @@ document
           includedEntityList += `<li>${entitiy.expertName.value}</li>`;
         } else if (footprintType === 'Organisational') {
           includedEntityList += `<li>${entitiy.organisationName.value}</li>`;
+        } else if (footprintType === 'Paper') {
+          includedEntityList += `<li>${entitiy.expertName.value}</li>`;
         }
       });
       includedEntityList += '</ul>';
@@ -211,14 +301,19 @@ document
       let includedEntities;
       if (footprintType === 'Individual') {
         includedEntities = `
-      <h4 style="margin-bottom: 1;">Included individuals in this footprint</h4>
-      ${includedEntityList}
-      `;
+        <h4 style="margin-bottom: 1;">Included individuals in this footprint</h4>
+        ${includedEntityList}
+        `;
       } else if (footprintType === 'Organisational') {
         includedEntities = `
-      <h4 style="margin-bottom: 1;">Included organisations  in this footprint</h4>
-      ${includedEntityList}
-      `;
+        <h4 style="margin-bottom: 1;">Included organisations  in this footprint</h4>
+        ${includedEntityList}
+        `;
+      } else if (footprintType === 'Paper') {
+        includedEntities = `
+        <h4 style="margin-bottom: 1;">Included authors in this footprint</h4>
+        ${includedEntityList}
+        `;
       }
 
       document.getElementById('includedEntitySection').innerHTML =

@@ -51,7 +51,7 @@ function createRadialClusterTreeChart(data) {
     .append('g')
     .attr('fill', 'none')
     .attr('stroke', '#005ca2')
-    .attr('stroke-opacity', 0.1)
+    .attr('stroke-opacity', 0.2)
     .attr('stroke-width', 2.5)
     .selectAll()
     .data(root.links())
@@ -117,10 +117,11 @@ function createRadialClusterTreeChart(data) {
       d => `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0)`
     )
     .attr('fill', d => (d.children ? d.data.nodeColour : d.data.nodeColour))
-    .attr('fill-opacity', d => (parseInt(d.data.showLabel) === 1 ? 1 : 0.1)) // using showLabel here might be a bit weird, but it tells me the node should be coloured aswell.
+    .attr('fill-opacity', d => (parseInt(d.data.showLabel) === 1 ? 1 : 0.2)) // using showLabel here might be a bit weird, but it tells me the node should be coloured aswell.
     .attr('id', d => `${d.data.id}`)
     .attr('class', d => `concept-${d.data.id}`)
-    .attr('r', 2.5);
+    .attr('name', d => `${d.data.name}`)
+    .attr('r', d => (parseInt(d.data.showLabel) === 1 ? 3.5 : 2.5));
 
   // Append labels
   chartGroup
