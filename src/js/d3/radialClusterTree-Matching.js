@@ -8,6 +8,12 @@ import {
 } from './interactiveD3Functionalities.js';
 
 function createRadialClusterTreeChartForMatching(data) {
+  const svgd3Footprint = document.getElementById('svgFootprint');
+  if (svgd3Footprint) {
+    // Checks if it exists, if so remove the svg before generating a new one.
+    svgd3Footprint.remove();
+  }
+
   const height = 1420; //930; //screen.availHeight - 280;
   const width = 1590; //screen.availWidth * 0.8;
   const cx = width * 0.5;
@@ -28,6 +34,7 @@ function createRadialClusterTreeChartForMatching(data) {
     .attr('height', height)
     .attr('viewBox', [-cx, -cy, width, height])
     .attr('style', 'width: auto; height: auto;')
+    .attr('id', 'svgFootprint')
     .call(
       // enables zoom and pann
       d3

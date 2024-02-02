@@ -1,10 +1,17 @@
 function createLegend(legendData, divID) {
   // Create a new SVG for the legend
+  const d3LegendDomElement = document.getElementById('svgD3Legend');
+  if (d3LegendDomElement) {
+    // Checks if it exists, if so remove the legend before generating a new one.
+    d3LegendDomElement.remove();
+  }
+
   const legendSvg = d3
     .select(divID)
     .append('svg')
     .attr('width', 230)
-    .attr('height', 1500); //legendData.length * 50);
+    .attr('height', 1500) //legendData.length * 50);
+    .attr('id', 'svgD3Legend');
 
   const legend = legendSvg
     .selectAll('.legend')

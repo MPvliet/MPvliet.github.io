@@ -285,7 +285,11 @@ document
       const data = transformSPARQLtoD3Hierarchie(sparqlResponse);
 
       const uniqueEntities = await genericSPARQLQuery(queryIncludedEntities);
-
+      if (uniqueEntities.results.bindings.length === 0) {
+        alert(
+          'This footprint contains no entities, double check if you spelled the paper/organisation or expert correctly. It is case sensitive'
+        );
+      }
       let includedEntityList = '<ul style="margin-top: 0;">';
       uniqueEntities.results.bindings.forEach(entitiy => {
         if (footprintType === 'Individual') {
