@@ -1,7 +1,7 @@
 async function genericSPARQLQuery(query) {
   try {
     const response = await fetch(
-      `http://130.89.24.53:7200/repositories/EO4GEOKG?query=${encodeURIComponent(
+      `https://graphdb.gch.utwente.nl/repositories/EO4GEOKG?query=${encodeURIComponent(
         query
       )}`,
       {
