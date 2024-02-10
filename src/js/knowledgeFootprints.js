@@ -108,7 +108,7 @@ document
               ?expertURI rdf:type boka:Expert;
                 foaf:name ?expertName;
                 boka:hasKnowledgeOf ?concept.
-              FILTER(CONTAINS(STR(?expertName), "${footprintEntity}"))
+              FILTER(CONTAINS(LCASE(STR(?expertName)), LCASE("${footprintEntity}")))
             } AS ?knownByFirstEntity)
           }
         }
@@ -143,7 +143,7 @@ document
               ?organisationURI rdf:type org:Organization;
                 rdfs:label ?organisationName;
                 org:hasMember ?membersOfOrganisationURI.
-              FILTER(CONTAINS(STR(?organisationName), "${footprintEntity}"))
+              FILTER(CONTAINS(LCASE(STR(?organisationName)), LCASE("${footprintEntity}")))
               ?membersOfOrganisationURI boka:hasKnowledgeOf ?concept.
             } AS ?knownByFirstEntity)
           }
@@ -179,7 +179,7 @@ document
             BIND(EXISTS {
               ?paperURI rdf:type bibo:Report;
                 bibo:doi ?DOIPaper.
-              FILTER(CONTAINS(STR(?DOIPaper), "${footprintEntity}"))
+              FILTER(CONTAINS(LCASE(STR(?DOIPaper)), LCASE("${footprintEntity}")))
               ?concept boka:describedIn ?paperURI.
             } AS ?knownByFirstEntity)
           }
@@ -202,7 +202,7 @@ document
     SELECT DISTINCT ?expertName WHERE {
       ?expertURI rdf:type boka:Expert;
         foaf:name ?expertName .
-      FILTER(CONTAINS(STR(?expertName), "${footprintEntity}"))
+      FILTER(CONTAINS(LCASE(STR(?expertName)), LCASE("${footprintEntity}")))
     } ORDER BY ?expertName
     `;
     } else if (footprintType === 'Organisational') {
@@ -214,7 +214,7 @@ document
     SELECT DISTINCT ?organisationName WHERE {
       ?organisationURI rdf:type org:Organization;
         rdfs:label ?organisationName.
-      FILTER(CONTAINS(STR(?organisationName), "${footprintEntity}"))
+      FILTER(CONTAINS(LCASE(STR(?organisationName)), LCASE("${footprintEntity}")))
     } ORDER BY ?organisationName
     `;
     } else if (footprintType === 'Paper') {
@@ -229,7 +229,7 @@ document
           foaf:name ?expertName;
           boka:authorOf ?paperURI.
         ?paperURI bibo:doi ?paperDOI.
-        FILTER(CONTAINS(STR(?paperDOI), "${footprintEntity}"))
+        FILTER(CONTAINS(LCASE(STR(?paperDOI)), LCASE("${footprintEntity}")))
       }
       ORDER BY (?expertName)
       `;
@@ -253,7 +253,7 @@ document
       const uniqueEntities = await genericSPARQLQuery(queryIncludedEntities);
       if (uniqueEntities.results.bindings.length === 0) {
         alert(
-          'This footprint contains no entities, double check if you spelled the paper/organisation or expert correctly. It is case sensitive'
+          'This footprint contains no entities, double check if you spelled the paper/organisation or expert correctly.'
         );
       }
       let includedEntityList = '<ul style="margin-top: 0;">';

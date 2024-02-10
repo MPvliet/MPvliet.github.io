@@ -117,13 +117,13 @@ document
               ?expertURI rdf:type boka:Expert;
                 foaf:name ?expertName;
                 boka:hasKnowledgeOf ?concept.
-              FILTER(CONTAINS(STR(?expertName), "${footprintEntityFirst}"))
+              FILTER(CONTAINS(LCASE(STR(?expertName)), LCASE("${footprintEntityFirst}")))
             } AS ?knownByFirstEntity)
             BIND(EXISTS {
               ?expertURI rdf:type boka:Expert;
                 foaf:name ?expertName;
                 boka:hasKnowledgeOf ?concept.
-              FILTER(CONTAINS(STR(?expertName), "${footprintEntitySecond}"))
+              FILTER(CONTAINS(LCASE(STR(?expertName)), LCASE("${footprintEntitySecond}")))
             } AS ?knownBySecondEntity)
           }
         }
@@ -162,7 +162,7 @@ document
               ?organisationURI rdf:type org:Organization;
                 rdfs:label ?organisationName;
                 org:hasMember ?membersOfOrganisationURI.
-              FILTER(CONTAINS(STR(?organisationName), "${footprintEntityFirst}"))
+              FILTER(CONTAINS(LCASE(STR(?organisationName)), LCASE("${footprintEntityFirst}")))
               ?membersOfOrganisationURI boka:hasKnowledgeOf ?concept.
             } AS ?knownByFirstEntity)
                   
@@ -171,7 +171,7 @@ document
               ?organisationURI rdf:type org:Organization;
                 rdfs:label ?organisationName;
                 org:hasMember ?membersOfOrganisationURI.
-              FILTER(CONTAINS(STR(?organisationName), "${footprintEntitySecond}"))
+              FILTER(CONTAINS(LCASE(STR(?organisationName)), LCASE("${footprintEntitySecond}")))
               ?membersOfOrganisationURI boka:hasKnowledgeOf ?concept.
             } AS ?knownBySecondEntity)
           }
@@ -209,7 +209,7 @@ document
             BIND(EXISTS {
               ?paperURI rdf:type bibo:Report;
                 bibo:doi ?DOIPaper.
-              FILTER(CONTAINS(STR(?DOIPaper), "${footprintEntityFirst}"))
+              FILTER(CONTAINS(LCASE(STR(?DOIPaper)), LCASE("${footprintEntityFirst}")))
               ?concept boka:describedIn ?paperURI.
             } AS ?knownByFirstEntity)
                   
@@ -217,7 +217,7 @@ document
             BIND(EXISTS {
               ?paperURI rdf:type bibo:Report;
                 bibo:doi ?DOIPaper.
-              FILTER(CONTAINS(STR(?DOIPaper), "${footprintEntitySecond}"))
+              FILTER(CONTAINS(LCASE(STR(?DOIPaper)), LCASE("${footprintEntitySecond}")))
               ?concept boka:describedIn ?paperURI.
             } AS ?knownBySecondEntity)
           }
@@ -242,7 +242,7 @@ document
         SELECT DISTINCT ?expertName WHERE {
           ?expertURI rdf:type boka:Expert;
             foaf:name ?expertName .
-          FILTER(CONTAINS(STR(?expertName), "${footprintEntityFirst}") || (CONTAINS(STR(?expertName), "${footprintEntitySecond}") ))
+          FILTER(CONTAINS(LCASE(STR(?expertName)), LCASE("${footprintEntityFirst}")) || (CONTAINS(LCASE(STR(?expertName)), LCASE("${footprintEntitySecond}"))))
         } ORDER BY ?expertName
         `;
     } else if (footprintType === 'Organisational') {
@@ -254,7 +254,7 @@ document
         SELECT DISTINCT ?organisationName WHERE {
           ?organisationURI rdf:type org:Organization;
             rdfs:label ?organisationName.
-          FILTER(CONTAINS(STR(?organisationName), "${footprintEntityFirst}") || (CONTAINS(STR(?organisationName), "${footprintEntitySecond}") ))
+          FILTER(CONTAINS(LCASE(STR(?organisationName)), LCASE("${footprintEntityFirst}")) || (CONTAINS(LCASE(STR(?organisationName)), LCASE("${footprintEntitySecond}"))))
         } ORDER BY ?organisationName
         `;
     } else if (footprintType === 'Paper') {
@@ -269,7 +269,7 @@ document
           foaf:name ?expertName;
           boka:authorOf ?paperURI.
         ?paperURI bibo:doi ?paperDOI.
-        FILTER((CONTAINS(STR(?paperDOI), "${footprintEntityFirst}")) || (CONTAINS(STR(?paperDOI), "${footprintEntitySecond}")))
+        FILTER((CONTAINS(LCASE(STR(?paperDOI)), LCASE("${footprintEntityFirst}"))) || (CONTAINS(LCASE(STR(?paperDOI)), LCASE("${footprintEntitySecond}"))))
       }
       ORDER BY (?expertName)
       `;
@@ -287,7 +287,7 @@ document
       const uniqueEntities = await genericSPARQLQuery(queryIncludedEntities);
       if (uniqueEntities.results.bindings.length === 0) {
         alert(
-          'This footprint contains no entities, double check if you spelled the paper/organisation or expert correctly. It is case sensitive'
+          'This footprint contains no entities, double check if you spelled the paper/organisation or expert correctly.'
         );
       }
       let includedEntityList = '<ul style="margin-top: 0;">';
