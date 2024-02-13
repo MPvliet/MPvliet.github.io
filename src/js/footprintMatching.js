@@ -330,6 +330,14 @@ document
         includedEntities;
 
       visualisationFunction[visualisationType](data);
+
+      // Some color setting for clarity.
+      document.getElementById(
+        'dropdownFootprintEntityFirst'
+      ).style.backgroundColor = '#008000';
+      document.getElementById(
+        'dropdownFootprintEntitySecond'
+      ).style.backgroundColor = '#FFA500';
     } catch (error) {
       console.error('Error creating D3 visualisation: ', error);
     }
