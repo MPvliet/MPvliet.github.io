@@ -136,6 +136,18 @@ input[type='submit']:hover {
 
 .search-bar {
   height: 10px;
+  width: 150px;
+  font-size: 16px;
+}
+
+.search-button {
+  height: 28px;
+  margin-left: 2px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #005ca2;
+  color: white;
   font-size: 16px;
 }
 
@@ -146,6 +158,30 @@ input[type='text'] {
   border: 1px solid #ccc;
   background-color: #ffffff;
   color: #0e1d1f;
+}
+
+.zoom-button {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  z-index: 10;
+  top: 20px;
+  background-color: #005ca2;
+  color: white;
+}
+
+#zoomInButton {
+  left: 20px;
+  top: 20px;
+}
+
+#zoomOutButton {
+  left: 20px;
+  top: 60px;
 }
 
 .bok-mangement-container {

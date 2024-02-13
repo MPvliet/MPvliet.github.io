@@ -16,7 +16,7 @@ document
     }
   });
 
-// Search bar functionality - Highlight node.
+// Search bar functionality - Highlight node - After hitting enter
 document
   .getElementById('searchBar')
   .addEventListener('keypress', function (event) {
@@ -24,6 +24,12 @@ document
       searchConceptInD3Vis(event.target.value);
     }
   });
+
+// Search bar functionality - Hightlight node after pressing search button.
+document.getElementById('searchButton').addEventListener('click', function () {
+  const searchedConcept = document.getElementById('searchBar').value;
+  searchConceptInD3Vis(searchedConcept);
+});
 
 // Fills the HTML form based on type of footprint input.
 document
@@ -326,8 +332,6 @@ document
       visualisationFunction[visualisationType](data);
     } catch (error) {
       console.error('Error creating D3 visualisation: ', error);
-      document.getElementById('right-side').innerText =
-        'Error creating D3 visualisation: ' + error.message;
     }
   });
 

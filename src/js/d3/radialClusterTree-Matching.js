@@ -20,6 +20,13 @@ function createRadialClusterTreeChartForMatching(data) {
   const cy = height * 0.5;
   const radius = Math.min(width, height) / 2 - 20;
 
+  const zoom = d3
+    .zoom()
+    .scaleExtent([0.5, 5])
+    .on('zoom', e => {
+      chartGroup.attr('transform', e.transform);
+    });
+
   const tree = d3
     .cluster()
     .size([2 * Math.PI, radius])
@@ -182,6 +189,15 @@ function createRadialClusterTreeChartForMatching(data) {
     .on('mouseover.details', showDetails)
     .on('mouseover.label', showLabel)
     .on('mouseout.label', hideLabel);
+
+  //https://stackoverflow.com/questions/70559083/allow-zoom-with-buttons-only-allow-pan-with-mouse-drag
+  d3.select('#zoomOutButton').on('click', function () {
+    zoom.scaleBy(svg.transition(), 1 / 1.3);
+  });
+
+  d3.select('#zoomInButton').on('click', function () {
+    zoom.scaleBy(svg.transition(), 1.3);
+  });
 
   const legendData = [
     {
