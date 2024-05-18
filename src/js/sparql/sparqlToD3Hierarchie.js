@@ -16,7 +16,6 @@ function transformSPARQLtoD3Hierarchie(json) {
       ? item.nodeValueSecondEntity.value
       : null;
     const matched = item.matched ? item.matched.value : null;
-    //console.log(parent, parentId, nodeColour, showLabel);
 
     if (!nodes.has(parent)) {
       nodes.set(parent, {
@@ -52,8 +51,6 @@ function transformSPARQLtoD3Hierarchie(json) {
       : null;
     const matched = item.matched ? item.matched.value : null;
 
-    //console.log(parent, child, childId, nodeColour, showLabel);
-
     if (child !== null && !nodes.has(child)) {
       nodes.set(child, {
         name: child,
@@ -87,7 +84,6 @@ function transformSPARQLtoD3Hierarchie(json) {
   );
 
   d3DataStructure.children.sort((a, b) => a.name.localeCompare(b.name)); //Sorting the children so I can predict how the knowledge footprint draws, I'm doing this so the outher dougnut chart is in the right order.
-  // console.log(d3DataStructure);
   return d3DataStructure;
 }
 

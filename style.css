@@ -212,6 +212,21 @@ input[type='text'] {
 .bok-management-form-topRight {
   grid-area: 1 / 2 / 2 / 3;
 }
+.bok-management-form-bottomRight {
+  grid-area: 3 / 2 / 4 / 3;
+}
+
+#loggingBox {
+  width: 100%;
+  height: 200px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: none;
+  background-color: #f9f9f9;
+  color: #333;
+  font-size: large;
+}
 
 /* copy from https://www.w3schools.com/howto/howto_css_switch.asp */
 /* The switch - the box around the slider */

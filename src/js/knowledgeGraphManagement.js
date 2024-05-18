@@ -33,8 +33,8 @@ document
     event.preventDefault(); // Without this the page refreshes once I click the submit button, but I want JS to process form input, not refresh.
     const expert = document.getElementById('dropdownExperts-Add').value;
     const concept = document.getElementById('dropdownConcepts-Add').value;
-    addExpertiseAnnotation(expert, concept);
-    event.target.form.reset(); // Resets the form after clicking submit.
+    await addExpertiseAnnotation(expert, concept);
+    location.reload();
   });
 
 // Processes what happens once you click "Delete Expertise"
@@ -44,8 +44,8 @@ document
     event.preventDefault(); // Without this the page refreshes once I click the submit button, but I want JS to process form input, not refresh.
     const expert = document.getElementById('dropdownExperts-Delete').value;
     const concept = document.getElementById('dropdownConcepts-Delete').value;
-    deleteExpertiseAnnotation(expert, concept);
-    event.target.form.reset(); // Resets the form after clicking submit.
+    await deleteExpertiseAnnotation(expert, concept);
+    location.reload();
   });
 
 // Processes what happens once you click "Add Organisation"
@@ -77,8 +77,15 @@ document
     event.preventDefault();
     const person = document.getElementById('dropdownExperts').value;
     const organisation = document.getElementById('dropdownOrganisations').value;
-    linkPersonToOrganisationAnnotation(person, organisation);
-    event.target.form.reset();
+    await linkPersonToOrganisationAnnotation(person, organisation);
+    location.reload();
+  });
+
+// Processes what happens once you click "Clear Log"
+document
+  .getElementById('submitButton-clearLog')
+  .addEventListener('click', function () {
+    clearLogs();
   });
 
 // Fills the Dropdown menu based on the information returned by the SPARQL query
@@ -119,6 +126,35 @@ async function populateConceptsAddDropDown(expert) {
   document.getElementById('dropdownConcepts-Add').innerHTML = options;
 }
 
+// Function to log messages and append them to local storage
+async function logMessage(message) {
+  let logs = localStorage.getItem('logs');
+  const timestamp = new Date().toLocaleString();
+  if (!logs) {
+    logs = '';
+  }
+
+  logs += `${timestamp}: ${message}\n`;
+
+  // Save updated logs to localstorage.
+  localStorage.setItem('logs', logs);
+}
+
+async function loadLogs() {
+  const loggingBox = document.getElementById('loggingBox');
+  const logs = localStorage.getItem('logs');
+  if (logs) {
+    loggingBox.value = logs;
+    loggingBox.scrollTop = loggingBox.scrollHeight;
+  }
+}
+
+async function clearLogs() {
+  localStorage.removeItem('logs');
+  const loggingBox = document.getElementById('loggingBox');
+  loggingBox.value = '';
+}
+
 async function addPersonAnnotation(personName) {
   const personUUID = self.crypto.randomUUID();
   const insertQuery = `
@@ -139,7 +175,7 @@ async function addPersonAnnotation(personName) {
 
   const response = await insertSPARQLStatement(insertQuery);
   if (response === 204) {
-    alert(`${personName} succesvol toegevoegd als Expert`);
+    await logMessage(`Succesfully added new person: ${personName}`);
   }
 }
 
@@ -163,7 +199,7 @@ async function addOrganisationAnnotation(organisationName) {
 
   const response = await insertSPARQLStatement(insertQuery);
   if (response === 204) {
-    alert(`${organisationName} succesvol toegevoegd als Organisatie`);
+    await logMessage(`Succesfully added new organisation: ${organisationName}`);
   }
 }
 
@@ -187,7 +223,7 @@ async function linkPersonToOrganisationAnnotation(
 
   const response = await insertSPARQLStatement(insertQuery);
   if (response === 204) {
-    alert(`${expertName} succesvol gelinked aan ${organisationName}`);
+    await logMessage(`${expertName} became a member of ${organisationName}`);
   }
 }
 
@@ -207,9 +243,7 @@ async function addExpertiseAnnotation(expertName, conceptName) {
 
   const response = await insertSPARQLStatement(insertQuery);
   if (response === 204) {
-    alert(
-      `${conceptName} succesvol toegevoegd als expertise aan ${expertName}`
-    );
+    await logMessage(`${expertName} now has knowledge of ${conceptName}`);
   }
 }
 
@@ -229,9 +263,7 @@ async function deleteExpertiseAnnotation(expertName, conceptName) {
 
   const response = await deleteSPARQLStatement(deleteQuery);
   if (response === 204) {
-    alert(
-      `${conceptName} succesvol verwijderd als expertise van ${expertName}`
-    );
+    await logMessage(`${expertName} has lost knowlegde of ${conceptName}`);
   }
 }
 
@@ -318,3 +350,6 @@ async function retrieveOrganisationID(organisationName) {
     return [];
   }
 }
+
+// Load logs when the page loads
+window.onload = await loadLogs();
