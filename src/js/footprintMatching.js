@@ -396,7 +396,7 @@ document
     ).value;
     saveSvgAsPng(
       document.getElementById('svgFootprint'),
-      `AGILE-KnowledgeFootprint-${footprintEntityFirst}-${footprintEntitySecond}.png`,
+      `AGILE-KnowledgeFootprint-Comparing-${footprintEntityFirst}-with-${footprintEntitySecond}.png`,
       {
         left: -1500,
         top: -1250,
