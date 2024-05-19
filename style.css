@@ -184,6 +184,11 @@ input[type='text'] {
   top: 60px;
 }
 
+#downloadButton {
+  left: 20px;
+  top: 100px;
+}
+
 .bok-mangement-container {
   /* https://cssgrid-generator.netlify.app/ */
   display: grid;
