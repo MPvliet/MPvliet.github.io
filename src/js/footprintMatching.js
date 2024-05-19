@@ -5,6 +5,40 @@ import { getAllOrganisations } from './sparql/getAllOrganisations.js';
 import { getAllExpertsFromOrganisation } from './sparql/getAllExpertsFromOrganisation.js';
 import { searchConceptInD3Vis } from './d3/interactiveD3Functionalities.js';
 
+function parseQueryParameters() {
+  const queryParams = new URLSearchParams(window.location.search);
+  return {
+    visualisationType:
+      queryParams.get('visualisationType') || 'Radial-Cluster-Tree',
+    footprintType: queryParams.get('footprintType') || '',
+    footprintFirstEntity: queryParams.get('footprintFirstEntity') || '',
+    footprintSecondEntity: queryParams.get('footprintSecondEntity') || '',
+    namedGraphVersion: queryParams.get('namedGraphVersion') || 'Original',
+  };
+}
+
+// Function to handle page load
+function onPageLoad() {
+  const queryParams = parseQueryParameters();
+
+  // Set received values from query paratmers as form input.
+  document.getElementById('typeOfVisualisationDropDown').value =
+    queryParams.visualisationType;
+  document.getElementById('typeOfFootprintDropDown').value =
+    queryParams.footprintType;
+  document.getElementById('dropdownFootprintEntityFirst').value =
+    queryParams.footprintFirstEntity;
+  document.getElementById('dropdownFootprintEntitySecond').value =
+    queryParams.footprintSecondEntity;
+  document.getElementById('chooseDataVersion').value =
+    queryParams.namedGraphVersion;
+
+  document.getElementById('submitButton-Generate-Footprint').click(); // Trigger click event on the submit button
+}
+
+// Als pagina opent, check dan of er query parameters aanwezig zijn.
+document.addEventListener('DOMContentLoaded', onPageLoad);
+
 // Show or Hide labels switch in the form.
 document
   .getElementById('switchShowLabel')
